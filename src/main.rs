@@ -11,6 +11,7 @@ struct People {
 fn main() -> Result<()> {
     let conn = Connection::open_in_memory()?;
 
+// creating table for People
     conn.execute(
         "CREATE TABLE People (
         id      INTEGER PRIMARY KEY,
@@ -20,6 +21,7 @@ fn main() -> Result<()> {
         [],
     )?;
 
+// adding people to the table
     let me = People {
         id: 0,
         name: "Rasmus".to_string(),
@@ -32,6 +34,7 @@ fn main() -> Result<()> {
         data: None,
     };
 
+// inserting to the table
     conn.execute(
         "INSERT INTO People (name, data) VALUES (?1, ?2)",
         params![me.name, me.data],
@@ -42,6 +45,7 @@ fn main() -> Result<()> {
         params![_person1.name, _person1.data],
     )?;
 
+// iterating people int the table
     let mut stmt = conn.prepare("SELECT id, name, data FROM People")?;
     let people_iter = stmt.query_map([], |row| {
         Ok(People {
@@ -51,6 +55,7 @@ fn main() -> Result<()> {
         })
     })?;
 
+// printing out the table
     for people in people_iter {
         println!("Found person {:?}", people.unwrap());
     }
